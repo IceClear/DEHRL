@@ -412,6 +412,8 @@ class HierarchyLayer(object):
         self.episode_reward['final'] = 0.0
         self.episode_reward['len'] = 0.0
 
+        self.ext_reward = None
+
         if self.hierarchy_id in [0]:
             '''for hierarchy_id=0, we need to summarize reward_raw'''
             self.episode_reward['raw'] = 0.0
@@ -817,7 +819,8 @@ class HierarchyLayer(object):
 
         if self.hierarchy_id in [0]:
             '''only when hierarchy_id is 0, the envs is returning reward_raw from the basic game emulator'''
-            self.reward_raw = torch.from_numpy(self.reward_raw_OR_reward).float()
+            self.ext_reward = self.reward_raw_OR_reward
+            self.reward_raw = torch.from_numpy(self.reward_raw_OR_reward*0).float()
             if args.env_name in ['OverCooked','MineCraft','GridWorld','Explore2D'] or ('NoFrameskip-v4' in args.env_name):
                 self.reward = self.reward_raw.sign()
             elif ('Bullet' in args.env_name) or (args.env_name in ['Explore2DContinuous']):
@@ -1023,6 +1026,15 @@ class HierarchyLayer(object):
                                 ),
                                 simple_value = leg_count[index_leg],
                             )
+
+            if self.hierarchy_id in [0] and self.ext_reward is not None:
+                self.summary.value.add(
+                    tag = 'hierarchy_{}/final_reward_{}'.format(
+                        self.hierarchy_id,
+                        'ext',
+                    ),
+                    simple_value = self.ext_reward[0],
+                )
 
             for episode_reward_type in self.episode_reward.keys():
                 self.summary.value.add(
