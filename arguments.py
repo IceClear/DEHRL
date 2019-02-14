@@ -2,6 +2,7 @@ import os
 import argparse
 import torch
 import utils
+import subprocess
 
 def get_args():
     parser = argparse.ArgumentParser(description='RL')
@@ -49,7 +50,7 @@ def get_args():
                         help='In updates')
     parser.add_argument('--vis-curves-interval', type=int, default=1,
                         help='In updates')
-    parser.add_argument('--num-frames', type=int, default=20e7,
+    parser.add_argument('--num-frames', type=int, default=10e7,
                         help='number of frames to train')
     parser.add_argument('--add-timestep', action='store_true', default=False,
                         help='add timestep to observations (depreciated)')
@@ -145,6 +146,9 @@ def get_args():
     parser.add_argument('--see-leg-fre', action='store_true',
                         help='See the frequency of each leg through tensorboard')
 
+    parser.add_argument('--clear-run', action='store_true',
+                        help='if clear dir' )
+
     args = parser.parse_args()
 
     args.summarize_behavior = args.summarize_observation or args.summarize_rendered_behavior or args.summarize_state_prediction
@@ -219,5 +223,10 @@ def get_args():
     args.save_dir = args.save_dir.replace('/','--')
     args.save_dir = os.path.join(args.exp, args.save_dir)
     args.save_dir = os.path.join('../results', args.save_dir)
+    if args.clear_run:
+        '''if clear_run, clear the path before create the path'''
+        input('You have set clear_run, is that what you want?')
+        subprocess.call(["rm", "-r", args.save_dir])
+
 
     return args
