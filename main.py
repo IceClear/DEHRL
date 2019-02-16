@@ -411,12 +411,14 @@ class HierarchyLayer(object):
         self.episode_reward['bounty_clip'] = 0.0
         self.episode_reward['final'] = 0.0
         self.episode_reward['len'] = 0.0
+        self.episode_reward['ext'] = 0.0
 
         self.ext_reward = None
 
         if self.hierarchy_id in [0]:
             '''for hierarchy_id=0, we need to summarize reward_raw'''
             self.episode_reward['raw'] = 0.0
+            self.episode_reward['ext'] = 0.0
             self.episode_reward_raw_all = 0.0
             self.episode_count = 0.0
 
@@ -1027,15 +1029,6 @@ class HierarchyLayer(object):
                                 simple_value = leg_count[index_leg],
                             )
 
-            if self.hierarchy_id in [0] and self.ext_reward is not None:
-                self.summary.value.add(
-                    tag = 'hierarchy_{}/final_reward_{}'.format(
-                        self.hierarchy_id,
-                        'ext',
-                    ),
-                    simple_value = self.ext_reward[0],
-                )
-
             for episode_reward_type in self.episode_reward.keys():
                 self.summary.value.add(
                     tag = 'hierarchy_{}/final_reward_{}'.format(
@@ -1107,6 +1100,7 @@ class HierarchyLayer(object):
         if self.hierarchy_id in [0]:
             '''for hierarchy_id=0, summarize reward_raw'''
             self.episode_reward['raw'] += self.reward_raw[0].item()
+            self.episode_reward['ext'] += self.ext_reward[0]
 
         self.episode_reward['len'] += 1
 
