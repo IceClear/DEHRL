@@ -50,7 +50,7 @@ def get_args():
                         help='In updates')
     parser.add_argument('--vis-curves-interval', type=int, default=1,
                         help='In updates')
-    parser.add_argument('--num-frames', type=int, default=10e7,
+    parser.add_argument('--num-frames', type=int, default=1e7,
                         help='number of frames to train')
     parser.add_argument('--add-timestep', action='store_true', default=False,
                         help='add timestep to observations (depreciated)')
